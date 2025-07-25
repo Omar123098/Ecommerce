@@ -261,7 +261,7 @@ If you created a superuser account, you can access the admin panel to:
 | `/add-watchlist/<id>/` | Add item to watchlist | Yes |
 | `/remove-watchlist/<id>/` | Remove from watchlist | Yes |
 
-### Form Validations (What I Learned!)
+### Form Validations
 
 The site checks for:
 - **Registration**: Username must be unique, valid email format
@@ -384,9 +384,3 @@ Huge thanks to these amazing tools that made this project possible:
 - **[Pillow](https://pillow.readthedocs.io/)** - For handling all the image uploads
 
 Also shoutout to the Django documentation and community - you guys rock! 🚀
-
----
-
-**Built with ❤️ and lots of coffee while learning web development**
-
-Questions? Feel free to reach out or open an issue!
