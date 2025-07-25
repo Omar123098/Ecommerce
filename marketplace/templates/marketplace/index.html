@@ -1,0 +1,165 @@
+{% extends "marketplace/layout.html" %}
+
+{% block body %}
+<div class="container-fluid mt-4">
+    <div class="row">
+        <!-- Left Sidebar for Filters -->
+        <div class="col-lg-2 col-md-3 mb-4">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0 font-weight-bold">
+                        <i class="fas fa-filter mr-1 text-info"></i>Filters
+                    </h6>
+                </div>
+                <div class="card-body p-3">
+                    <form method="GET">
+                        <div class="form-group mb-3">
+                            <label for="categorySelect" class="font-weight-bold text-dark mb-2" style="font-size: 0.9rem;">
+                                Category
+                            </label>
+                            <select id="categorySelect" name="category" class="form-control form-control-sm">
+                                <option value="">All Categories</option>
+                                {% for category in categories %}
+                                    <option value="{{ category.id }}" {% if request.GET.category == category.id|stringformat:"s" %}selected{% endif %}>
+                                        {{ category.name }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-info btn-sm btn-block">
+                            <i class="fas fa-search mr-1"></i>Apply
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="col-lg-10 col-md-9">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="font-weight-bold text-dark">
+                    <i class="fas fa-fire text-danger mr-2"></i>Active Listings
+                </h2>
+                <span class="badge badge-primary badge-pill px-3 py-2">
+                    {{ listings|length }} item{{ listings|length|pluralize }}
+                </span>
+            </div>
+
+            {% if listings %}
+                <div class="row">
+                    {% for listing in listings %}
+                        <div class="col-xl-3 col-lg-4 col-md-6 mb-4">
+                            <div class="card h-100 shadow-sm border-0 listing-card">
+                                    <!-- Image Section -->
+                                    <a href="{% url 'listing_detail' listing.id %}" class="text-decoration-none">
+                                        <div class="card-img-top-container">
+                                            {% if listing.get_image_url %}
+                                                <img src="{{ listing.get_image_url }}" class="card-img-top" alt="{{ listing.title }}" style="height: 200px; object-fit: cover;">
+                                            {% else %}
+                                                <div class="no-image-placeholder d-flex align-items-center justify-content-center" style="height: 200px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
+                                                    <i class="fas fa-image text-muted" style="font-size: 3rem;"></i>
+                                                </div>
+                                            {% endif %}
+                                            <!-- Price Badge -->
+                                            <div class="price-badge">
+                                                <span class="badge badge-success font-weight-bold" style="font-size: 0.9rem;">
+                                                    ${{ listing.price }}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </a>
+                                    <div class="card-body d-flex flex-column">
+                                    <!-- Title -->
+                                    <a href="{% url 'listing_detail' listing.id %}" class="text-decoration-none">
+                                        <h5 class="card-title font-weight-bold text-dark mb-2">
+                                            {{ listing.title }}
+                                        </h5>
+                                    </a>
+
+                                    <!-- Description (truncated) -->
+                                    <a href="{% url 'listing_detail' listing.id %}" class="text-decoration-none">
+                                        <p class="card-text text-muted mb-3 flex-grow-1">
+                                            {% if listing.description|length > 80 %}
+                                                {{ listing.description|slice:":80" }}...
+                                            {% else %}
+                                                {{ listing.description }}
+                                            {% endif %}
+                                        </p>
+                                    </a>
+
+                                    <!-- Owner and Date Info -->
+                                    <a href="{% url 'listing_detail' listing.id %}" class="text-decoration-none">
+                                        <div class="listing-info mb-3">
+                                            <small class="text-muted">
+                                                <i class="fas fa-user mr-1"></i>
+                                                Listed by <strong>{{ listing.owner.username }}</strong>
+                                            </small>
+                                            <br>
+                                            <small class="text-muted">
+                                                <i class="fas fa-clock mr-1"></i>
+                                                {{ listing.created_at|timesince }} ago
+                                            </small>
+                                            {% if listing.category %}
+                                                <br>
+                                                <small class="text-muted">
+                                                    <i class="fas fa-tag mr-1"></i>
+                                                    {{ listing.category.name }}
+                                                </small>
+                                            {% endif %}
+                                        </div>
+                                    </a>
+
+                                    <!-- Action Buttons (inside the card) -->
+                                    {% if user.is_authenticated %}
+                                        <div class="card-actions mt-auto">
+                                            <div class="row">
+                                                <div class="col-6">
+                                                    <a href="{% url 'add_to_watchlist' listing.id %}" class="btn btn-outline-danger btn-sm btn-block" onclick="event.stopPropagation();">
+                                                        <i class="fas fa-heart mr-1"></i>Watch
+                                                    </a>
+                                                </div>
+                                                <div class="col-6">
+                                                    <a href="{% url 'listing_detail' listing.id %}" class="btn btn-success btn-sm btn-block" onclick="event.stopPropagation();">
+                                                        <i class="fas fa-shopping-cart mr-1"></i>Buy Now
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% else %}
+                                        <div class="card-actions mt-auto text-center">
+                                            <p class="text-muted mb-2">
+                                                <small>Please log in to purchase</small>
+                                            </p>
+                                            <a href="{% url 'login' %}" class="btn btn-primary btn-sm" onclick="event.stopPropagation();">
+                                                <i class="fas fa-sign-in-alt mr-1"></i>Log In to Buy
+                                            </a>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <!-- No Listings Message -->
+                <div class="text-center py-5">
+                    <div class="empty-state">
+                        <i class="fas fa-inbox text-muted mb-3" style="font-size: 4rem;"></i>
+                        <h4 class="text-muted">No Active Listings</h4>
+                        <p class="text-muted">Be the first to create a listing!</p>
+                        {% if user.is_authenticated %}
+                            <a href="{% url 'create_listing' %}" class="btn btn-primary mt-3">
+                                <i class="fas fa-plus mr-2"></i>Create Your First Listing
+                            </a>
+                        {% else %}
+                            <a href="{% url 'register' %}" class="btn btn-primary mt-3">
+                                <i class="fas fa-user-plus mr-2"></i>Register to Start Selling
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

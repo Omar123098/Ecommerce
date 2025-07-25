@@ -1,0 +1,98 @@
+{% extends "marketplace/layout.html" %}
+
+{% block body %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-gradient-primary text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                    <h3 class="mb-0 font-weight-bold">
+                        <i class="fas fa-shopping-bag mr-2"></i>My Purchases
+                    </h3>
+                    <p class="mb-0 mt-2">Items you have purchased</p>
+                </div>
+                <div class="card-body">
+                    {% if purchases %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="thead-light">
+                                    <tr>
+                                        <th scope="col">Item</th>
+                                        <th scope="col">Price</th>
+                                        <th scope="col">Seller</th>
+                                        <th scope="col">Purchase Date</th>
+                                        <th scope="col">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for purchase in purchases %}
+                                        <tr>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    {% if purchase.listing.get_image_url %}
+                                                        <img src="{{ purchase.listing.get_image_url }}" 
+                                                             alt="{{ purchase.listing.title }}" 
+                                                             class="rounded mr-3" 
+                                                             style="width: 60px; height: 60px; object-fit: cover;">
+                                                    {% else %}
+                                                        <div class="bg-light rounded mr-3 d-flex align-items-center justify-content-center" 
+                                                             style="width: 60px; height: 60px;">
+                                                            <i class="fas fa-image text-muted"></i>
+                                                        </div>
+                                                    {% endif %}
+                                                    <div>
+                                                        <h6 class="mb-1 font-weight-bold">{{ purchase.listing.title }}</h6>
+                                                        {% if purchase.listing.category %}
+                                                            <small class="text-muted">
+                                                                <i class="fas fa-tag mr-1"></i>{{ purchase.listing.category.name }}
+                                                            </small>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <span class="badge badge-success badge-lg p-2">
+                                                    ${{ purchase.purchase_price }}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <i class="fas fa-user-circle mr-2 text-muted"></i>
+                                                    <strong>{{ purchase.seller.username }}</strong>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div>
+                                                    <div class="font-weight-bold">{{ purchase.purchase_date|date:"M d, Y" }}</div>
+                                                    <small class="text-muted">{{ purchase.purchase_date|time:"g:i A" }}</small>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <a href="{% url 'listing_detail' purchase.listing.id %}" 
+                                                   class="btn btn-outline-primary btn-sm">
+                                                    <i class="fas fa-eye mr-1"></i>View Item
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-5">
+                            <div class="mb-4">
+                                <i class="fas fa-shopping-bag text-muted" style="font-size: 4rem;"></i>
+                            </div>
+                            <h4 class="text-muted mb-3">No Purchases Yet</h4>
+                            <p class="text-muted mb-4">You haven't purchased any items yet. Start browsing to find something you like!</p>
+                            <a href="{% url 'index' %}" class="btn btn-primary">
+                                <i class="fas fa-search mr-2"></i>Browse Listings
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

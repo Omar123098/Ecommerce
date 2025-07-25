@@ -1,0 +1,210 @@
+{% extends "marketplace/layout.html" %}
+
+{% block body %}
+<div class="container mt-3">
+    <div class="row justify-content-center">
+        <div class="col-12">
+            <div class="card shadow-lg border-0 create-listing-card">
+                <div class="card-header bg-gradient-primary text-white text-center" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                    <h3 class="mb-0 font-weight-bold">
+                        <i class="fas fa-plus-circle mr-2"></i>Create New Listing
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <form action="{% url 'create_listing' %}" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="title" class="font-weight-bold">
+                                        <i class="fas fa-heading mr-1 text-primary"></i>Title
+                                    </label>
+                                    <input type="text" 
+                                           class="form-control border-primary" 
+                                           id="title" 
+                                           name="title" 
+                                           placeholder="Enter listing title" 
+                                           required>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="price" class="font-weight-bold">
+                                        <i class="fas fa-dollar-sign mr-1 text-warning"></i>Price (per item)
+                                    </label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text bg-warning text-white">$</span>
+                                        </div>
+                                        <input type="number" 
+                                               class="form-control border-warning" 
+                                               id="price" 
+                                               name="price" 
+                                               step="0.01" 
+                                               min="0" 
+                                               placeholder="0.00" 
+                                               required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="quantity" class="font-weight-bold">
+                                        <i class="fas fa-boxes mr-1 text-info"></i>Quantity
+                                    </label>
+                                    <input type="number" 
+                                           class="form-control border-info" 
+                                           id="quantity" 
+                                           name="quantity" 
+                                           min="1" 
+                                           value="1"
+                                           placeholder="1" 
+                                           required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label class="font-weight-bold">
+                                        <i class="fas fa-image mr-1 text-success"></i>Product Image
+                                    </label>
+                                    
+                                    <!-- Image Option Selection -->
+                                    <div class="mb-3">
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="image_type" id="file_option" value="file" checked>
+                                            <label class="form-check-label font-weight-bold" for="file_option">
+                                                <i class="fas fa-upload mr-1 text-primary"></i>Upload File
+                                            </label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="image_type" id="url_option" value="url">
+                                            <label class="form-check-label font-weight-bold" for="url_option">
+                                                <i class="fas fa-link mr-1 text-info"></i>Image URL
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <!-- File Upload Section -->
+                                    <div class="mb-3" id="file_upload_section">
+                                        <label for="imageFile" class="form-label">
+                                            <i class="fas fa-file-upload mr-1"></i>Choose Image File
+                                        </label>
+                                        <div class="custom-file">
+                                            <input type="file" 
+                                                   class="custom-file-input" 
+                                                   id="imageFile" 
+                                                   name="imageFile" 
+                                                   accept="image/*">
+                                            <label class="custom-file-label" for="imageFile">No file chosen</label>
+                                        </div>
+                                        <small class="form-text text-muted mt-2">
+                                            <i class="fas fa-info-circle mr-1"></i>
+                                            Supported formats: JPG, PNG, GIF (Max 5MB)
+                                        </small>
+                                    </div>
+
+                                    <!-- URL Input Section -->
+                                    <div class="mb-3" id="url_input_section" style="display: none;">
+                                        <label for="imageUrl" class="form-label">
+                                            <i class="fas fa-globe mr-1"></i>Image URL
+                                        </label>
+                                        <input type="url" 
+                                               class="form-control border-success" 
+                                               id="imageUrl" 
+                                               name="imageUrl" 
+                                               placeholder="https://example.com/image.jpg">
+                                        <small class="form-text text-muted">
+                                            <i class="fas fa-info-circle mr-1"></i>
+                                            Enter a direct link to an image
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="form-group">
+                                    <label for="description" class="font-weight-bold">
+                                        <i class="fas fa-align-left mr-1 text-info"></i>Description
+                                    </label>
+                                    <textarea class="form-control border-info" 
+                                              id="description" 
+                                              name="description" 
+                                              rows="3" 
+                                              placeholder="Describe your item..." 
+                                              required></textarea>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="category" class="font-weight-bold">
+                                        <i class="fas fa-tags mr-1 text-danger"></i>Category
+                                    </label>
+                                    <select class="form-control border-danger custom-select" id="category" name="category">
+                                        <option value="" selected>Choose category...</option>
+                                        {% for category in categories %}
+                                            <option value="{{ category.id }}">{{ category.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="text-center mt-4">
+                            <button type="submit" class="btn btn-lg text-white font-weight-bold mr-3" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; border-radius: 25px; min-width: 150px;">
+                                <i class="fas fa-rocket mr-1"></i>Create
+                            </button>
+                            <a href="{% url 'index' %}" class="btn btn-outline-secondary btn-lg" style="border-radius: 25px; min-width: 120px;">
+                                <i class="fas fa-times mr-1"></i>Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const fileOption = document.getElementById('file_option');
+    const urlOption = document.getElementById('url_option');
+    const fileUploadSection = document.getElementById('file_upload_section');
+    const urlInputSection = document.getElementById('url_input_section');
+    const imageFile = document.getElementById('imageFile');
+    const imageUrl = document.getElementById('imageUrl');
+    const fileLabel = document.querySelector('.custom-file-label');
+
+    // Handle file selection to update label
+    imageFile.addEventListener('change', function(e) {
+        const fileName = e.target.files[0] ? e.target.files[0].name : 'No file chosen';
+        fileLabel.textContent = fileName;
+    });
+
+    // Handle radio button changes
+    fileOption.addEventListener('change', function() {
+        if (this.checked) {
+            fileUploadSection.style.display = 'block';
+            urlInputSection.style.display = 'none';
+            // Clear URL input when switching to file upload
+            imageUrl.value = '';
+        }
+    });
+
+    urlOption.addEventListener('change', function() {
+        if (this.checked) {
+            fileUploadSection.style.display = 'none';
+            urlInputSection.style.display = 'block';
+            // Clear file input when switching to URL
+            imageFile.value = '';
+            fileLabel.textContent = 'No file chosen';
+        }
+    });
+});
+</script>
+{% endblock %}

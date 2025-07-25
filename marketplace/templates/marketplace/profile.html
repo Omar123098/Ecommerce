@@ -1,0 +1,253 @@
+{% extends "marketplace/layout.html" %}
+
+{% block body %}
+<div class="container-fluid">
+    <!-- Profile Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-lg border-0" style="position: relative; z-index: 1000;">
+                <div class="card-header bg-gradient-primary text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h3 class="mb-0 font-weight-bold">
+                                <i class="fas fa-user-circle mr-2"></i>{{ user.username }}'s Profile
+                            </h3>
+                        </div>
+                        <div class="col-md-4 text-md-right">
+                            <small class="text-light">
+                                <i class="fas fa-calendar mr-1"></i>Member since {{ user.date_joined|date:"M Y" }}
+                            </small>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3 text-center">
+                            <div class="profile-stat">
+                                <h4 class="text-primary mb-1">{{ user_listings.count }}</h4>
+                                <p class="text-muted mb-0">Active Listings</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3 text-center">
+                            <div class="profile-stat">
+                                <h4 class="text-success mb-1">{{ total_purchases }}</h4>
+                                <p class="text-muted mb-0">Total Purchases</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3 text-center">
+                            <div class="profile-stat">
+                                <h4 class="text-primary mb-1">{{ total_sales }}</h4>
+                                <p class="text-muted mb-0">Total Sales</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3 text-center">
+                            <div class="profile-stat">
+                                <h4 class="text-warning mb-1">{{ watchlist_count }}</h4>
+                                <p class="text-muted mb-0">Watching</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<div class="container mt-4">
+    <!-- Quick Actions -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm border-0">
+                <div class="card-body text-center">
+                    <h5 class="card-title font-weight-bold mb-3">Quick Actions</h5>
+                    <div class="row">
+                        <div class="col-md-4 mb-2">
+                            <a href="{% url 'create_listing' %}" class="btn btn-primary btn-block">
+                                <i class="fas fa-plus-circle mr-2"></i>Create New Listing
+                            </a>
+                        </div>
+                        <div class="col-md-4 mb-2">
+                            <a href="{% url 'watchlist' %}" class="btn btn-outline-danger btn-block">
+                                <i class="fas fa-heart mr-2"></i>View Watchlist
+                            </a>
+                        </div>
+                        <div class="col-md-4 mb-2">
+                            <a href="{% url 'my_purchases' %}" class="btn btn-outline-success btn-block">
+                                <i class="fas fa-shopping-bag mr-2"></i>View My Purchases
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- My Listings -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0 font-weight-bold">
+                        <i class="fas fa-list mr-2 text-primary"></i>My Listings
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if user_listings %}
+                        <div class="row">
+                            {% for listing in user_listings %}
+                                <div class="col-md-6 col-lg-4 mb-3">
+                                    <div class="card h-100 border">
+                                        {% if listing.get_image_url %}
+                                            <img src="{{ listing.get_image_url }}" class="card-img-top" alt="{{ listing.title }}" style="height: 150px; object-fit: cover;">
+                                        {% else %}
+                                            <div class="card-img-top d-flex align-items-center justify-content-center bg-light" style="height: 150px;">
+                                                <i class="fas fa-image text-muted fa-2x"></i>
+                                            </div>
+                                        {% endif %}
+                                        <div class="card-body d-flex flex-column">
+                                            <h6 class="card-title font-weight-bold">{{ listing.title }}</h6>
+                                            <p class="card-text text-muted small flex-grow-1">
+                                                {{ listing.description|truncatechars:60 }}
+                                            </p>
+                                            <div class="mt-auto">
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <span class="text-success font-weight-bold">${{ listing.price }}</span>
+                                                    {% if listing.isSold %}
+                                                        <span class="badge badge-info">Sold</span>
+                                                    {% elif listing.isActive %}
+                                                        <span class="badge badge-success">Available</span>
+                                                    {% else %}
+                                                        <span class="badge badge-secondary">Closed</span>
+                                                    {% endif %}
+                                                </div>
+                                                <small class="text-muted">
+                                                    <i class="fas fa-clock mr-1"></i>{{ listing.created_at|timesince }} ago
+                                                </small>
+                                            </div>
+                                        </div>
+                                        <div class="card-footer bg-light">
+                                            <a href="{% url 'listing_detail' listing.id %}" class="btn btn-sm btn-outline-primary btn-block">
+                                                <i class="fas fa-eye mr-1"></i>View Details
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-inbox text-muted mb-3" style="font-size: 3rem;"></i>
+                            <h5 class="text-muted">No listings yet</h5>
+                            <p class="text-muted">Start by creating your first listing!</p>
+                            <a href="{% url 'create_listing' %}" class="btn btn-primary">
+                                <i class="fas fa-plus-circle mr-2"></i>Create Listing
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Purchases -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-light">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0 font-weight-bold">
+                            <i class="fas fa-shopping-bag mr-2 text-success"></i>Recent Purchases
+                        </h5>
+                        <a href="{% url 'my_purchases' %}" class="btn btn-sm btn-outline-success">View All</a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    {% if user_purchases %}
+                        <div class="table-responsive">
+                            <table class="table table-hover table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Item</th>
+                                        <th>Price</th>
+                                        <th>Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for purchase in user_purchases %}
+                                        <tr>
+                                            <td>
+                                                <a href="{% url 'listing_detail' purchase.listing.id %}" class="text-decoration-none">
+                                                    {{ purchase.listing.title|truncatechars:25 }}
+                                                </a>
+                                            </td>
+                                            <td class="font-weight-bold text-success">${{ purchase.purchase_price }}</td>
+                                            <td class="text-muted small">{{ purchase.purchase_date|date:"M d" }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-shopping-bag text-muted mb-3" style="font-size: 2rem;"></i>
+                            <h6 class="text-muted">No purchases yet</h6>
+                            <p class="text-muted small">Start shopping for items!</p>
+                            <a href="{% url 'index' %}" class="btn btn-sm btn-success">
+                                <i class="fas fa-search mr-2"></i>Browse Items
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0 font-weight-bold">
+                        <i class="fas fa-dollar-sign mr-2 text-primary"></i>Recent Sales
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if user_sales %}
+                        <div class="table-responsive">
+                            <table class="table table-hover table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Item</th>
+                                        <th>Price</th>
+                                        <th>Buyer</th>
+                                        <th>Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for sale in user_sales %}
+                                        <tr>
+                                            <td>
+                                                <a href="{% url 'listing_detail' sale.listing.id %}" class="text-decoration-none">
+                                                    {{ sale.listing.title|truncatechars:20 }}
+                                                </a>
+                                            </td>
+                                            <td class="font-weight-bold text-primary">${{ sale.purchase_price }}</td>
+                                            <td class="text-muted small">{{ sale.buyer.username }}</td>
+                                            <td class="text-muted small">{{ sale.purchase_date|date:"M d" }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-dollar-sign text-muted mb-3" style="font-size: 2rem;"></i>
+                            <h6 class="text-muted">No sales yet</h6>
+                            <p class="text-muted small">Create listings to start selling!</p>
+                            <a href="{% url 'create_listing' %}" class="btn btn-sm btn-primary">
+                                <i class="fas fa-plus mr-2"></i>Create Listing
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
