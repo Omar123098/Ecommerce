@@ -282,6 +282,11 @@ def add_to_watchlist(request, listing_id):
     """Add a listing to user's watchlist"""
     listing = get_object_or_404(Listing, id=listing_id)
     
+    # Prevent users from adding their own listings to watchlist
+    if listing.owner == request.user:
+        messages.error(request, "You cannot add your own listing to your watchlist.")
+        return redirect('listing_detail', listing_id=listing_id)
+    
     # Check if already in watchlist
     watchlist_item, created = Watchlist.objects.get_or_create(
         user=request.user,
