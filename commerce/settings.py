@@ -45,6 +45,8 @@ CSRF_COOKIE_SAMESITE = None
 CSRF_FAILURE_VIEW = 'django.views.csrf.csrf_failure'
 CSRF_COOKIE_AGE = 31449600  # 1 year in seconds
 CSRF_COOKIE_NAME = 'csrftoken'
+CSRF_HEADER_NAME = 'HTTP_X_CSRFTOKEN'
+CSRF_COOKIE_DOMAIN = None
 
 # Login/Logout URLs
 LOGIN_URL = '/login'
