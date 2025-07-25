@@ -2,7 +2,7 @@ from django.core.management.base import BaseCommand
 from marketplace.models import Category
 
 class Command(BaseCommand):
-    help = 'Create default categories for the auction site'
+    help = 'Create default categories for the marketplace site'
 
     def handle(self, *args, **options):
         categories = [

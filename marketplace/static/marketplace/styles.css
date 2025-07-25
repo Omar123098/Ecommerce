@@ -359,13 +359,13 @@ body {
     box-shadow: 0 8px 20px rgba(220, 53, 69, 0.4);
 }
 
-.bid-btn {
+.buy-btn {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     border: 2px solid transparent;
     color: white;
 }
 
-.bid-btn:hover {
+.buy-btn:hover {
     background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
     box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
 }
