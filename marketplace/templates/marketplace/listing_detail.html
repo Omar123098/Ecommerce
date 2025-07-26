@@ -23,8 +23,12 @@
                         <div class="alert alert-success mb-4">
                             <i class="fas fa-check-circle mr-2"></i>
                             <strong>SOLD!</strong> This item has been purchased
-                            {% if purchase %}
-                                by <strong>{{ purchase.buyer.username }}</strong> on {{ purchase.purchase_date|date:"M d, Y" }}
+                            {% if purchases %}
+                                {% if purchases.count == 1 %}
+                                    by <strong>{{ purchases.first.buyer.username }}</strong> on {{ purchases.first.purchase_date|date:"M d, Y" }}
+                                {% else %}
+                                    by {{ purchases.count }} buyer{{ purchases.count|pluralize }}
+                                {% endif %}
                             {% endif %}
                         </div>
                     {% elif not listing.isActive %}
@@ -230,8 +234,12 @@
                                     <div class="alert alert-success">
                                         <i class="fas fa-check-circle mr-2"></i>
                                         Your item has been sold!
-                                        {% if purchase %}
-                                            <br><small>Purchased by {{ purchase.buyer.username }} on {{ purchase.purchase_date|date:"M d, Y" }}</small>
+                                        {% if purchases %}
+                                            {% if purchases.count == 1 %}
+                                                <br><small>Purchased by {{ purchases.first.buyer.username }} on {{ purchases.first.purchase_date|date:"M d, Y" }}</small>
+                                            {% else %}
+                                                <br><small>Sold to {{ purchases.count }} buyer{{ purchases.count|pluralize }}</small>
+                                            {% endif %}
                                         {% endif %}
                                     </div>
                                 {% else %}

@@ -22,25 +22,37 @@
                 </div>
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-md-3 text-center">
+                        <div class="col-md-2 text-center">
                             <div class="profile-stat">
                                 <h4 class="text-primary mb-1">{{ user_listings.count }}</h4>
                                 <p class="text-muted mb-0">Active Listings</p>
                             </div>
                         </div>
-                        <div class="col-md-3 text-center">
+                        <div class="col-md-2 text-center">
                             <div class="profile-stat">
                                 <h4 class="text-success mb-1">{{ total_purchases }}</h4>
-                                <p class="text-muted mb-0">Total Purchases</p>
+                                <p class="text-muted mb-0">Purchases</p>
                             </div>
                         </div>
-                        <div class="col-md-3 text-center">
+                        <div class="col-md-2 text-center">
+                            <div class="profile-stat">
+                                <h4 class="text-success mb-1">${{ total_spent|floatformat:0 }}</h4>
+                                <p class="text-muted mb-0">Total Spent</p>
+                            </div>
+                        </div>
+                        <div class="col-md-2 text-center">
                             <div class="profile-stat">
                                 <h4 class="text-primary mb-1">{{ total_sales }}</h4>
-                                <p class="text-muted mb-0">Total Sales</p>
+                                <p class="text-muted mb-0">Sales</p>
                             </div>
                         </div>
-                        <div class="col-md-3 text-center">
+                        <div class="col-md-2 text-center">
+                            <div class="profile-stat">
+                                <h4 class="text-primary mb-1">${{ total_earned|floatformat:0 }}</h4>
+                                <p class="text-muted mb-0">Total Earned</p>
+                            </div>
+                        </div>
+                        <div class="col-md-2 text-center">
                             <div class="profile-stat">
                                 <h4 class="text-warning mb-1">{{ watchlist_count }}</h4>
                                 <p class="text-muted mb-0">Watching</p>
@@ -167,7 +179,8 @@
                                 <thead>
                                     <tr>
                                         <th>Item</th>
-                                        <th>Price</th>
+                                        <th>Qty</th>
+                                        <th>Total</th>
                                         <th>Date</th>
                                     </tr>
                                 </thead>
@@ -179,7 +192,10 @@
                                                     {{ purchase.listing.title|truncatechars:25 }}
                                                 </a>
                                             </td>
-                                            <td class="font-weight-bold text-success">${{ purchase.purchase_price }}</td>
+                                            <td>
+                                                <span class="badge badge-info badge-sm">{{ purchase.quantity_purchased }}</span>
+                                            </td>
+                                            <td class="font-weight-bold text-success">${{ purchase.total_price }}</td>
                                             <td class="text-muted small">{{ purchase.purchase_date|date:"M d" }}</td>
                                         </tr>
                                     {% endfor %}
@@ -214,7 +230,8 @@
                                 <thead>
                                     <tr>
                                         <th>Item</th>
-                                        <th>Price</th>
+                                        <th>Qty</th>
+                                        <th>Total</th>
                                         <th>Buyer</th>
                                         <th>Date</th>
                                     </tr>
@@ -224,10 +241,13 @@
                                         <tr>
                                             <td>
                                                 <a href="{% url 'listing_detail' sale.listing.id %}" class="text-decoration-none">
-                                                    {{ sale.listing.title|truncatechars:20 }}
+                                                    {{ sale.listing.title|truncatechars:15 }}
                                                 </a>
                                             </td>
-                                            <td class="font-weight-bold text-primary">${{ sale.purchase_price }}</td>
+                                            <td>
+                                                <span class="badge badge-info badge-sm">{{ sale.quantity_purchased }}</span>
+                                            </td>
+                                            <td class="font-weight-bold text-primary">${{ sale.total_price }}</td>
                                             <td class="text-muted small">{{ sale.buyer.username }}</td>
                                             <td class="text-muted small">{{ sale.purchase_date|date:"M d" }}</td>
                                         </tr>

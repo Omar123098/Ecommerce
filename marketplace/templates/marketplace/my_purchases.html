@@ -6,10 +6,38 @@
         <div class="col-12">
             <div class="card shadow-sm border-0">
                 <div class="card-header bg-gradient-primary text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                    <h3 class="mb-0 font-weight-bold">
-                        <i class="fas fa-shopping-bag mr-2"></i>My Purchases
-                    </h3>
-                    <p class="mb-0 mt-2">Items you have purchased</p>
+                    <div class="row align-items-center">
+                        <div class="col-md-6">
+                            <h3 class="mb-0 font-weight-bold">
+                                <i class="fas fa-shopping-bag mr-2"></i>My Purchases
+                            </h3>
+                            <p class="mb-0 mt-2">Items you have purchased</p>
+                        </div>
+                        {% if purchases %}
+                        <div class="col-md-6 text-md-right">
+                            <div class="row">
+                                <div class="col-4">
+                                    <div class="text-center">
+                                        <h4 class="mb-0">{{ purchase_count }}</h4>
+                                        <small>Purchase{{ purchase_count|pluralize }}</small>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="text-center">
+                                        <h4 class="mb-0">{{ total_items }}</h4>
+                                        <small>Item{{ total_items|pluralize }}</small>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="text-center">
+                                        <h4 class="mb-0">${{ total_spent }}</h4>
+                                        <small>Total Spent</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
                 </div>
                 <div class="card-body">
                     {% if purchases %}
@@ -18,7 +46,9 @@
                                 <thead class="thead-light">
                                     <tr>
                                         <th scope="col">Item</th>
-                                        <th scope="col">Price</th>
+                                        <th scope="col">Quantity</th>
+                                        <th scope="col">Price per Item</th>
+                                        <th scope="col">Total Cost</th>
                                         <th scope="col">Seller</th>
                                         <th scope="col">Purchase Date</th>
                                         <th scope="col">Actions</th>
@@ -51,8 +81,18 @@
                                                 </div>
                                             </td>
                                             <td>
-                                                <span class="badge badge-success badge-lg p-2">
+                                                <span class="badge badge-info badge-lg p-2">
+                                                    {{ purchase.quantity_purchased }}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <span class="badge badge-secondary badge-lg p-2">
                                                     ${{ purchase.purchase_price }}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <span class="badge badge-success badge-lg p-2">
+                                                    ${{ purchase.total_price }}
                                                 </span>
                                             </td>
                                             <td>

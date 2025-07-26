@@ -24,9 +24,15 @@ def index(request):
         if category_id:
             listings = listings.filter(category_id=category_id)
 
+    # Get user's watchlist items if authenticated
+    user_watchlist = set()
+    if request.user.is_authenticated:
+        user_watchlist = set(Watchlist.objects.filter(user=request.user).values_list('listing_id', flat=True))
+
     return render(request, "marketplace/index.html", {
         "listings": listings,
-        "categories": categories
+        "categories": categories,
+        "user_watchlist": user_watchlist
     })
 
 def category_listings(request, category_id):
@@ -36,9 +42,15 @@ def category_listings(request, category_id):
     # Get all available listings in this category (active and not sold)
     listings = Listing.objects.filter(category=category, isActive=True, isSold=False).order_by('-created_at')
 
+    # Get user's watchlist items if authenticated
+    user_watchlist = set()
+    if request.user.is_authenticated:
+        user_watchlist = set(Watchlist.objects.filter(user=request.user).values_list('listing_id', flat=True))
+
     return render(request, "marketplace/category_listings.html", {
         "listings": listings,
-        "category": category
+        "category": category,
+        "user_watchlist": user_watchlist
     })
 
 def create_listing(request):
@@ -159,17 +171,14 @@ def listing_detail(request, listing_id):
         in_watchlist = Watchlist.objects.filter(user=request.user, listing=listing).exists()
 
     # Get purchase information if sold
-    purchase = None
+    purchases = None
     if listing.isSold:
-        try:
-            purchase = Purchase.objects.get(listing=listing)
-        except Purchase.DoesNotExist:
-            pass
+        purchases = Purchase.objects.filter(listing=listing).order_by('-purchase_date')
 
     return render(request, "marketplace/listing_detail.html", {
         "listing": listing,
         "in_watchlist": in_watchlist,
-        "purchase": purchase,
+        "purchases": purchases,
     })
 
 def login_view(request):
@@ -247,6 +256,16 @@ def profile(request):
     # Get total sales made
     total_sales = Purchase.objects.filter(seller=user).count()
     
+    # Calculate purchase summary statistics
+    all_purchases = Purchase.objects.filter(buyer=user)
+    total_spent = sum(purchase.total_price for purchase in all_purchases)
+    total_items_purchased = sum(purchase.quantity_purchased for purchase in all_purchases)
+    
+    # Calculate sales summary statistics
+    all_sales = Purchase.objects.filter(seller=user)
+    total_earned = sum(sale.total_price for sale in all_sales)
+    total_items_sold = sum(sale.quantity_purchased for sale in all_sales)
+    
     return render(request, "marketplace/profile.html", {
         "user_listings": user_listings,
         "user_purchases": user_purchases,
@@ -254,6 +273,10 @@ def profile(request):
         "watchlist_count": watchlist_count,
         "total_purchases": total_purchases,
         "total_sales": total_sales,
+        "total_spent": total_spent,
+        "total_items_purchased": total_items_purchased,
+        "total_earned": total_earned,
+        "total_items_sold": total_items_sold,
     })
 
 
@@ -272,8 +295,15 @@ def my_purchases(request):
     """Display user's purchase history"""
     user_purchases = Purchase.objects.filter(buyer=request.user).order_by('-purchase_date')
     
+    # Calculate summary statistics
+    total_spent = sum(purchase.total_price for purchase in user_purchases)
+    total_items = sum(purchase.quantity_purchased for purchase in user_purchases)
+    
     return render(request, "marketplace/my_purchases.html", {
-        "purchases": user_purchases
+        "purchases": user_purchases,
+        "total_spent": total_spent,
+        "total_items": total_items,
+        "purchase_count": user_purchases.count()
     })
 
 
@@ -298,7 +328,12 @@ def add_to_watchlist(request, listing_id):
     else:
         messages.info(request, f"'{listing.title}' is already in your watchlist.")
     
-    return redirect('listing_detail', listing_id=listing_id)
+    # Check if request came from index page
+    next_url = request.GET.get('next')
+    if next_url == 'index':
+        return redirect('index')
+    else:
+        return redirect('listing_detail', listing_id=listing_id)
 
 
 @login_required
@@ -313,7 +348,12 @@ def remove_from_watchlist(request, listing_id):
     except Watchlist.DoesNotExist:
         messages.error(request, "This listing was not in your watchlist.")
     
-    return redirect('listing_detail', listing_id=listing_id)
+    # Check if request came from index page
+    next_url = request.GET.get('next')
+    if next_url == 'index':
+        return redirect('index')
+    else:
+        return redirect('listing_detail', listing_id=listing_id)
 
 
 @login_required

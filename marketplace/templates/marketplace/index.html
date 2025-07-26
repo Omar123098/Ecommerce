@@ -115,9 +115,15 @@
                                             <div class="card-actions mt-auto">
                                                 <div class="row">
                                                     <div class="col-6">
-                                                        <a href="{% url 'add_to_watchlist' listing.id %}" class="btn btn-outline-danger btn-sm btn-block" onclick="event.stopPropagation();">
-                                                            <i class="fas fa-heart mr-1"></i>Watch
-                                                        </a>
+                                                        {% if listing.id in user_watchlist %}
+                                                            <a href="{% url 'remove_from_watchlist' listing.id %}?next=index" class="btn btn-danger btn-sm btn-block" onclick="event.stopPropagation();">
+                                                                <i class="fas fa-heart-broken mr-1"></i>Unwatch
+                                                            </a>
+                                                        {% else %}
+                                                            <a href="{% url 'add_to_watchlist' listing.id %}?next=index" class="btn btn-outline-danger btn-sm btn-block" onclick="event.stopPropagation();">
+                                                                <i class="fas fa-heart mr-1"></i>Watch
+                                                            </a>
+                                                        {% endif %}
                                                     </div>
                                                     <div class="col-6">
                                                         <a href="{% url 'listing_detail' listing.id %}" class="btn btn-success btn-sm btn-block" onclick="event.stopPropagation();">
