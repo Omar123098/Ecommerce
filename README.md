@@ -385,6 +385,6 @@ Huge thanks to these amazing tools that made this project possible:
 
 Also shoutout to the Django documentation and community - you guys rock! 🚀
 
-###Video
+### Video
 
-▶ [Watch Demo Video](https://youtu.be/VIDEO_ID)
+[![Watch the video](https://img.youtube.com/vi/Zn0T07SSE6k/0.jpg)](https://youtu.be/Zn0T07SSE6k)
