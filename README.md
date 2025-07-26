@@ -384,3 +384,7 @@ Huge thanks to these amazing tools that made this project possible:
 - **[Pillow](https://pillow.readthedocs.io/)** - For handling all the image uploads
 
 Also shoutout to the Django documentation and community - you guys rock! 🚀
+
+###Video
+
+▶ [Watch Demo Video](https://youtu.be/VIDEO_ID)
