@@ -27,7 +27,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
-# CSRF settings
+# CSRF settings for development - more permissive
 CSRF_TRUSTED_ORIGINS = [
     'http://localhost:8000',
     'https://localhost:8000',
@@ -37,16 +37,12 @@ CSRF_TRUSTED_ORIGINS = [
     'https://0.0.0.0:8000',
 ]
 
-# Additional CSRF settings for development
+# Very permissive CSRF settings for development
 CSRF_COOKIE_SECURE = False
 CSRF_COOKIE_HTTPONLY = False
+CSRF_COOKIE_SAMESITE = None  # Most permissive
 CSRF_USE_SESSIONS = False
-CSRF_COOKIE_SAMESITE = None
-CSRF_FAILURE_VIEW = 'django.views.csrf.csrf_failure'
-CSRF_COOKIE_AGE = 31449600  # 1 year in seconds
-CSRF_COOKIE_NAME = 'csrftoken'
-CSRF_HEADER_NAME = 'HTTP_X_CSRFTOKEN'
-CSRF_COOKIE_DOMAIN = None
+CSRF_COOKIE_AGE = None  # Never expire
 
 # Login/Logout URLs
 LOGIN_URL = '/login'
